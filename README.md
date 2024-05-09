@@ -1,6 +1,8 @@
 # Beginning-DAX-Seamark-Errata
 Personal Errata for Phil Seamark's "Beginning DAX with Power BI" 1/e [book](https://doi.org/10.1007/978-1-4842-3477-8) published by Apress
 
+<img src="Images/Seamark - Beginning DAX Book.png" alt="Phil Seamark's beginning DAX book cover" width="200">
+
 ## Chapter 5 (Joins)
 
 ### p. 98 - Table 5.2
