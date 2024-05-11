@@ -16,3 +16,17 @@ Personal Errata for Phil Seamark's "Beginning DAX with Power BI" 1/e [book](http
 | Ford | Focus | 2018 | 500 |
 | Ford | Focus | 2019 | 600 |
 
+## Chapter 6 (Filtering)
+
+### p. 133 - Listing 6-1
+
+*Should be >= 10, rather than > 10*
+```dax
+Count of Sales (10 or more) =
+COUNTROWS (
+    FILTER (
+        'Fact Sale',
+        'Face Sale'[Quantity] >= 10
+    )
+)
+```
