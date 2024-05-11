@@ -30,3 +30,8 @@ COUNTROWS (
     )
 )
 ```
+
+### p. 159 - Figure 6-19
+
+Table should have a visual level filter of `'Dimension Stock Item'[Buying Package]="Carton"`.
+<img src="Images/p159.png" alt="Table visual requires a Buying Package filter of 'Carton' to agree with book" width="600">
