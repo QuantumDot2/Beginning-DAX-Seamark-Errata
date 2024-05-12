@@ -133,6 +133,6 @@ RETURN
     )
 ```
 
-Where the measure `[Sum of Total]` is defined as `Sum of Total := SUM(Sales[Total]`
+Where the measure `[Sum of Total]` is defined as `Sum of Total := SUM(Sales[Total])`
 
 It should be noted that the original DAX code is quite an interesting way to approach the problem!
