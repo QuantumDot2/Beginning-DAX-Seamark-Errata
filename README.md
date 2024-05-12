@@ -35,3 +35,104 @@ COUNTROWS (
 
 Table should have a visual level filter of `'Dimension Stock Item'[Buying Package]="Carton"`.
 <img src="Images/p159.png" alt="Table visual requires a Buying Package filter of 'Carton' to agree with book" width="600">
+
+## Chapter 9 (Practical Dax)
+
+### pp. 252–257
+
+Original DAX Table code is not very performant:
+```dax
+Top 10 Sales Products = 
+
+VAR InnerGroup =
+    SUMMARIZECOLUMNS(
+        Sales[Product],
+        Sales[Date],
+        "Daily Revenue", SUM(Sales[Total])
+    )
+
+VAR CopyOfSummaryTable =
+    SELECTCOLUMNS(
+        InnerGroup,
+        "ProductA", [Product],
+        "DateA", [Date],
+        "Daily RevenueA", [Daily Revenue],
+        "RowCounter", 1
+    )
+
+VAR CrossJoinTables =
+    FILTER(
+        GENERATE( CopyOfSummaryTable, InnerGroup),
+        [Product]=[ProductA] &&
+        [Daily Revenue] <= [Daily RevenueA]
+    )
+
+VAR ProductByDateRanking =
+    GROUPBY(
+        CrossJoinTables,
+        [Product],
+        [Date],
+        "Daily Revenue", MAXX( CURRENTGROUP(), [Daily Revenue]),
+        "Rank", SUMX( CURRENTGROUP(), [RowCounter])
+    )
+
+VAR TopTenDaysPerProduct =
+    FILTER(
+        ProductByDateRanking,
+        [Rank] <= 10
+    )
+
+RETURN 
+   GROUPBY(
+        TopTenDaysPerProduct, 
+        [Product],
+        "Average of Top 10 Best Days",
+        AVERAGEX(
+            CURRENTGROUP(), [Daily Revenue]
+        )
+    )
+```
+
+However, a **significant** speed improvement is obtained using this (simpler) code:
+
+```dax
+Avg top 10 sales =
+
+VAR SalesByProduct =
+    ALL (
+        Sales[Date],
+        Sales[Product]
+    )
+
+VAR ProductsSaleDays =
+    ADDCOLUMNS (
+        SalesByProduct,
+        "Average sales for top 10 days",
+            AVERAGEX (
+                TOPN (
+                    10,
+                    VALUES ( Sales[Date] ),
+                    [Sum of Total]
+                ),
+                [Sum of Total]
+            )
+    )
+
+VAR SummarySales =
+    SELECTCOLUMNS (
+        ProductsSaleDays,
+        "Product", [Product],
+        "Avg Sales", [Average sales for top 10 days]
+    )
+
+RETURN
+    TOPN (
+        10,
+        DISTINCT ( SummarySales ),
+        [Avg Sales]
+    )
+```
+
+Where the measure `[Sum of Total]` is defined as `Sum of Total := SUM(Sales[Total]`
+
+It should be noted that the original DAX code is quite an interesting way to approach the problem!
